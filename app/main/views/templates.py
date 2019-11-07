@@ -1,6 +1,6 @@
+import re
 from datetime import datetime, timedelta
 from string import ascii_uppercase
-import re
 
 from dateutil.parser import parse
 from flask import abort, flash, redirect, render_template, request, url_for
@@ -78,15 +78,16 @@ def view_template(service_id, template_id):
         "To": _("To"),
         "Subject": _("Subject")
     }
+
     def translate_brackets(x):
         g = x.group(0)
-        english = g[1:-1] # drop brackets
+        english = g[1:-1]  # drop brackets
         if english not in translate:
             return english
         return translate[english]
-    
+
     # this regex finds test inside []
-    template_str = re.sub("\[[^]]*\]", translate_brackets, template_str)
+    template_str = re.sub(r"\[[^]]*\]", translate_brackets, template_str)
 
     return render_template(
         'views/templates/template.html',
