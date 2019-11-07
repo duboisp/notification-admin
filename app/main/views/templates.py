@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from string import ascii_uppercase
+import re
 
 from dateutil.parser import parse
 from flask import abort, flash, redirect, render_template, request, url_for
@@ -59,21 +60,38 @@ def view_template(service_id, template_id):
         return redirect(url_for(
             '.send_one_off', service_id=service_id, template_id=template_id
         ))
+    email_preview_template = get_template(
+        template,
+        current_service,
+        letter_preview_url=url_for(
+            '.view_letter_template_preview',
+            service_id=service_id,
+            template_id=template_id,
+            filetype='png',
+        ),
+        show_recipient=True,
+        page_count=get_page_count_for_letter(template),
+    )
+    template_str = str(email_preview_template)
+    translate = {
+        "From": _("From"),
+        "To": _("To"),
+        "Subject": _("Subject")
+    }
+    def translate_brackets(x):
+        g = x.group(0)
+        english = g[1:-1] # drop brackets
+        if english not in translate:
+            return english
+        return translate[english]
+    
+    # this regex finds test inside []
+    template_str = re.sub("\[[^]]*\]", translate_brackets, template_str)
 
     return render_template(
         'views/templates/template.html',
-        template=get_template(
-            template,
-            current_service,
-            letter_preview_url=url_for(
-                '.view_letter_template_preview',
-                service_id=service_id,
-                template_id=template_id,
-                filetype='png',
-            ),
-            show_recipient=True,
-            page_count=get_page_count_for_letter(template),
-        ),
+        template=email_preview_template,
+        template_str=template_str,
         template_postage=template["postage"],
         user_has_template_permission=user_has_template_permission,
     )
