@@ -381,6 +381,9 @@ class RegisterUserForm(StripWhitespaceForm):
     password = password()
     # always register as email type
     auth_type = HiddenField('auth_type', default='email_auth')
+    research_studies = BooleanField("Do you want to participate in our user research studies?")
+    mailing_list = BooleanField("Do you want to receive outreach and updates on GC Notify?")
+
 
 
 class RegisterUserFromInviteForm(RegisterUserForm):

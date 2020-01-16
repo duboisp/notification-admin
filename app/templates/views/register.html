@@ -1,4 +1,5 @@
 {% extends "withoutnav_template.html" %}
+{% from "components/checkbox.html" import checkbox %}
 {% from "components/textbox.html" import textbox %}
 {% from "components/page-footer.html" import page_footer %}
 {% from "components/form.html" import form_wrapper %}
@@ -23,7 +24,15 @@
       <input class="visually-hidden" aria-hidden="true" tabindex="-1" id="defeat-chrome-autocomplete">
       {% set txt = _('At least 8 characters') %}
       {{ textbox(form.password, hint=txt, width='3-4', autocomplete='new-password') }}
+      <div class="form-group">
+      {{ checkbox(form.research_studies) }}
+      {{ checkbox(form.mailing_list) }}
+      </div>
+      
       {{form.auth_type}}
+        
+      
+
       {% set txt = _('Continue') %}
       {{ page_footer(txt) }}
     {% endcall %}
